@@ -55,7 +55,7 @@ jobs:
       - run: |
           pip install -r requirements.txt
           flet pack main.py
-          7z a $GITHUB_WORKSPACE/pdf2excel.zip $GITHUB_WORKSPACE/dist/
+          7z a $GITHUB_WORKSPACE/pdf2excel.zip ./dist/
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
