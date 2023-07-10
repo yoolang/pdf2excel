@@ -1,9 +1,8 @@
 name: package on different operating systems
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - v*
 
 jobs:
 #   Package-on-Macos:
