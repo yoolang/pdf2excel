@@ -6,40 +6,40 @@ on:
     branches: [ main ]
 
 jobs:
-  Package-on-Macos:
-    name: package on Macos
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.9'
-          cache: 'pip' # caching pip dependencies
-      - run: |
-          pip install -r requirements.txt
-          flet pack main.py
-          zip -r $GITHUB_WORKSPACE/pdf2excel.zip ./dist/main/
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: TODO New Release.
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/pdf2excel.zip
-          asset_name: pdf2excel.zip
-          asset_content_type: application/zip
+#   Package-on-Macos:
+#     name: package on Macos
+#     runs-on: macos-latest
+#     steps:
+#       - uses: actions/checkout@v1
+#       - name: Set up Python 3.9
+#         uses: actions/setup-python@v1
+#         with:
+#           python-version: '3.9'
+#           cache: 'pip' # caching pip dependencies
+#       - run: |
+#           pip install -r requirements.txt
+#           flet pack main.py
+#           zip -r $GITHUB_WORKSPACE/pdf2excel.zip ./dist/main/
+#       - name: Create Release
+#         id: create_release
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           tag_name: ${{ github.ref }}
+#           release_name: Release ${{ github.ref }}
+#           body: TODO New Release.
+#           draft: false
+#           prerelease: false
+#       - name: Upload Release Asset
+#         uses: actions/upload-release-asset@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: ${{ github.workspace }}/pdf2excel.zip
+#           asset_name: pdf2excel.zip
+#           asset_content_type: application/zip
 
   Package-on-Windows:
     name: Package on Windows
@@ -55,7 +55,7 @@ jobs:
       - run: |
           pip install -r requirements.txt
           flet pack main.py
-          zip -r $GITHUB_WORKSPACE/pdf2excel.zip ./dist/main/
+          7z a $GITHUB_WORKSPACE/pdf2excel.zip ./dist/main/
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
