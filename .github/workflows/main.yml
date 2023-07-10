@@ -54,7 +54,7 @@ jobs:
       - run: |
           pip install -r requirements.txt
           flet pack main.py
-          7z a $GITHUB_WORKSPACE/pdf2excel.zip ./dist/
+          7z a pdf2excel.zip ./dist/
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/pdf2excel.zip
+          asset_path: pdf2excel.zip
           asset_name: pdf2excel.zip
           asset_content_type: application/zip
