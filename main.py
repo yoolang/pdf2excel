@@ -32,12 +32,12 @@ class PdfFileRow(Column):
                 self.selected_files,
                 self.handle_pages,
                 Row([self.transfer_btn, self.reset_btn,], alignment=ft.MainAxisAlignment.CENTER),
-                self.log_show
+                Column([self.log_show], height=350, auto_scroll=True, scroll=ft.ScrollMode.AUTO)
                 ]
         self.alignment=ft.MainAxisAlignment.START,
         self.horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     
-    def reset(self):
+    def reset(self, e):
         self.transfer_btn.text = '开始提取'
         self.transfer_btn.disabled = True
 
@@ -46,6 +46,7 @@ class PdfFileRow(Column):
         self.selected_files.label = '请指定要提取的PDF文件'
 
         self.handle_pages.value = ''
+        self.log_show.value = ''
 
         self.reset_btn.disabled = False
         self.update()
@@ -80,7 +81,7 @@ class PdfFileRow(Column):
 
         else:
             self.log_show.value = self.log_show.value + "\n 未提取到表格，请重新指定文件"
-            self.reset()
+            self.reset(None)
             return
 
         self.reset_btn.disabled = False
@@ -114,6 +115,12 @@ class PdfFileRow(Column):
 
 def main(page: Page):
     page.title = "PDF提取表格数据工具"
+    page.window_full_screen = False
+    page.window_maximizable = False
+    page.window_resizable = False
+    page.window_height = 600
+    page.window_width = 800
+    
     pdf_file_row = PdfFileRow()
     page.add(pdf_file_row)
     
