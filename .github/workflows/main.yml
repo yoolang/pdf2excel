@@ -72,5 +72,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: pdf2excel.zip
-          asset_name: pdf2excel.zip
+          asset_name: pdf2excel-${{ github.ref }}.zip
           asset_content_type: application/zip
