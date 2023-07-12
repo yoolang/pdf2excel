@@ -3,6 +3,7 @@ from flet import (
     Page,
     Row,
     Column,
+    Checkbox,
     Text,
     TextField,
     ElevatedButton,
@@ -26,13 +27,14 @@ class PdfFileRow(Column):
                     ),
             )
         self.handle_pages = TextField(label='请指定要提取的页码，用,分隔; 为空时将提取全部')
+        self.has_lines = Checkbox(label='有线表格', value=False)
         self.transfer_btn = ElevatedButton("开始提取", disabled=True, on_click=self.transfer)
         self.reset_btn = ElevatedButton("重置", on_click=self.reset)
         self.log_show = Text('', selectable=True)
         self.controls = [
                 self.selected_files,
                 self.handle_pages,
-                Row([self.transfer_btn, self.reset_btn,], alignment=ft.MainAxisAlignment.CENTER),
+                Row([self.has_lines, self.transfer_btn, self.reset_btn,], alignment=ft.MainAxisAlignment.CENTER),
                 Column([self.log_show], height=350, auto_scroll=True, scroll=ft.ScrollMode.AUTO)
                 ]
         self.alignment=ft.MainAxisAlignment.START,
@@ -49,6 +51,7 @@ class PdfFileRow(Column):
         self.handle_pages.value = ''
         self.log_show.value = ''
 
+        self.has_lines.value = False
         self.reset_btn.disabled = False
         self.update()
 
@@ -67,7 +70,7 @@ class PdfFileRow(Column):
             if pages is None or pages == '' :
                 page_count = len(PdfReader(pdf_path).pages)
                 pages = (','.join('%s' %i for i in list(range(1, page_count + 1))))
-            tables = camelot.read_pdf(pdf_path, pages=pages)
+            tables = camelot.read_pdf(pdf_path, pages=pages, flavor='lattice' if self.has_lines.value else 'stream')
             if tables is not None and len(tables) > 0:
                 self.log_show.value = self.log_show.value + f"\n 共提取到{len(tables)}张表格"
                 self.log_show.update()
