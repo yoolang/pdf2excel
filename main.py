@@ -11,6 +11,7 @@ from flet import (
     )
 import camelot.io as camelot
 import pandas as pd
+from PyPDF2 import PdfReader
 
 class PdfFileRow(Column):
     def __init__(self):
@@ -64,9 +65,9 @@ class PdfFileRow(Column):
             xlsx_path = pdf_path[:-3] + 'xlsx'
             pages = self.handle_pages.value
             if pages is None or pages == '' :
-                tables = camelot.read_pdf(pdf_path)
-            else:
-                tables = camelot.read_pdf(pdf_path, pages=pages)
+                page_count = len(PdfReader(pdf_path).pages)
+                pages = (','.join('%s' %i for i in list(range(1, page_count + 1))))
+            tables = camelot.read_pdf(pdf_path, pages=pages)
             if tables is not None and len(tables) > 0:
                 self.log_show.value = self.log_show.value + f"\n 共提取到{len(tables)}张表格"
                 self.log_show.update()
