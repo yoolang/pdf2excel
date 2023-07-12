@@ -59,30 +59,33 @@ class PdfFileRow(Column):
         self.reset_btn.disabled = True
         self.reset_btn.update()
 
-        pdf_path = self.selected_files.value
-        xlsx_path = pdf_path[:-3] + 'xlsx'
-        pages = self.handle_pages.value
-        if pages is None or pages == '' :
-            tables = camelot.read_pdf(pdf_path)
-        else:
-            tables = camelot.read_pdf(pdf_path, pages=pages)
-        if tables is not None and len(tables) > 0:
-            self.log_show.value = self.log_show.value + f"\n 共提取到{len(tables)}张表格"
-            self.log_show.update()
-            with pd.ExcelWriter(xlsx_path) as writer:
-                for table in tables:
-                    self.log_show.value = self.log_show.value + f"\n 正在处理第{table.page}页表格"
-                    self.log_show.update()
-                    sheet_name = f"page-{table.page}-table-{table.order}"
-                    table.df.to_excel(writer, sheet_name=sheet_name, index=False, header=None)
-    
-            self.log_show.value = self.log_show.value + f"\n 处理完成，Excel文件路径为：{xlsx_path}"
-            self.log_show.update()
+        try:
+            pdf_path = self.selected_files.value
+            xlsx_path = pdf_path[:-3] + 'xlsx'
+            pages = self.handle_pages.value
+            if pages is None or pages == '' :
+                tables = camelot.read_pdf(pdf_path)
+            else:
+                tables = camelot.read_pdf(pdf_path, pages=pages)
+            if tables is not None and len(tables) > 0:
+                self.log_show.value = self.log_show.value + f"\n 共提取到{len(tables)}张表格"
+                self.log_show.update()
+                with pd.ExcelWriter(xlsx_path) as writer:
+                    for table in tables:
+                        self.log_show.value = self.log_show.value + f"\n 正在处理第{table.page}页表格"
+                        self.log_show.update()
+                        sheet_name = f"page-{table.page}-table-{table.order}"
+                        table.df.to_excel(writer, sheet_name=sheet_name, index=False, header=None)
+        
+                self.log_show.value = self.log_show.value + f"\n 处理完成，Excel文件路径为：{xlsx_path}"
+                self.log_show.update()
 
-        else:
-            self.log_show.value = self.log_show.value + "\n 未提取到表格，请重新指定文件"
-            self.reset(None)
-            return
+            else:
+                self.log_show.value = self.log_show.value + "\n 未提取到表格，请重新指定文件"
+                self.reset(None)
+                return
+        except Exception as e:
+            self.log_show.value = self.log_show.value + f"\n 发生异常：{e}"
 
         self.reset_btn.disabled = False
         self.update()
