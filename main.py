@@ -11,7 +11,7 @@ from flet import (
     )
 import camelot.io as camelot
 import pandas as pd
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 class PdfFileRow(Column):
     def __init__(self):
