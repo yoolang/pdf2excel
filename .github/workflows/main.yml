@@ -16,7 +16,7 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
       - name: Package
-      - run: |
+        run: |
           pip install -r requirements.txt
           flet pack main.py
           tar -cvzf pdf2excel-${{ github.ref.name }}-windows.tar.gz ./dist/
@@ -37,7 +37,7 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
       - name: Package
-      - run: |
+        run: |
           pip install -r requirements.txt
           flet pack main.py
           tar -cvzf pdf2excel-${{ github.ref.name }}-macos.tar.gz ./dist/
