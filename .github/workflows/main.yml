@@ -19,6 +19,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           flet pack main.py
+          dir
           tar -cvzf pdf2excel-${{ github.ref.name }}-windows.tar.gz ./dist/
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
