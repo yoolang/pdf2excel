@@ -5,55 +5,65 @@ on:
       - v*
 
 jobs:
-  Package-on-Macos:
-    name: package on Macos
-    runs-on: macos-latest
+  build-package-windows:
+    name: Build on Windows
+    runs-on: [windows-latest]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.9
         uses: actions/setup-python@v1
         with:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
+      - name: Package
       - run: |
           pip install -r requirements.txt
           flet pack main.py
-          zip -r pdf2excel.zip ./dist/
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tar -cvzf pdf2excel-${{ github.ref.name }}-windows.tar.gz ./dist/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref.name }}
-          body: New Release.
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: pdf2excel.zip
-          asset_name: pdf2excel-${{ github.ref.name }}-macos.zip
-          asset_content_type: application/zip
+          name: windows-app
+          path: pdf2excel-${{ github.ref.name }}-windows.tar.gz
 
-  Package-on-Windows:
-    name: Package on Windows
-    runs-on: windows-latest
+  build-package-macos:
+    name: Build on Macos
+    runs-on: [macos-latest]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.9
         uses: actions/setup-python@v1
         with:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
+      - name: Package
       - run: |
           pip install -r requirements.txt
           flet pack main.py
-          7z a pdf2excel.zip ./dist/
+          tar -cvzf pdf2excel-${{ github.ref.name }}-macos.tar.gz ./dist/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: macos-app
+          path: pdf2excel-${{ github.ref.name }}-macos.tar.gz
+
+  release:
+    needs: [build-package-windows, build-package-macos]
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download artifacts windows-app
+        uses: actions/download-artifact@v1
+        with:
+          name: windows-app
+
+      - name: Download artifacts macos-app
+        uses: actions/download-artifact@v1
+        with:
+          name: macos-app
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -62,15 +72,26 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref.name }}
-          body: New Release.
+          body: Automated Release.
           draft: false
           prerelease: false
       - name: Upload Release Asset
+        id: upload-release-asset-windows-app
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: pdf2excel.zip
-          asset_name: pdf2excel-${{ github.ref.name }}-win.zip
-          asset_content_type: application/zip
+          asset_path: pdf2excel-${{ github.ref.name }}-windows.tar.gz
+          asset_name: pdf2excel-${{ github.ref.name }}-windows.tar.gz
+          asset_content_type: application/gzip
+      - name: Upload Release Asset
+        id: upload-release-asset-macos-app
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: pdf2excel-${{ github.ref.name }}-macos.tar.gz
+          asset_name: pdf2excel-${{ github.ref.name }}-macos.tar.gz
+          asset_content_type: application/gzip
