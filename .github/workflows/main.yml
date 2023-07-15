@@ -26,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.ref.name }}
           body: New Release.
           draft: false
           prerelease: false
@@ -37,7 +37,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: pdf2excel.zip
-          asset_name: pdf2excel-${{ github.ref:10 }}-macos.zip
+          asset_name: pdf2excel-${{ github.ref.name }}-macos.zip
           asset_content_type: application/zip
 
   Package-on-Windows:
@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.ref.name }}
           body: New Release.
           draft: false
           prerelease: false
@@ -72,5 +72,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: pdf2excel.zip
-          asset_name: pdf2excel-${{ github.ref:10 }}-win.zip
+          asset_name: pdf2excel-${{ github.ref.name }}-win.zip
           asset_content_type: application/zip
