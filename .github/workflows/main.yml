@@ -19,13 +19,11 @@ jobs:
         run: |
           pip install -r requirements.txt
           flet pack main.py
-          dir
-          tar -cvzf pdf2excel-${{ github.ref.name }}-windows.tar.gz ./dist/
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
           name: windows-app
-          path: pdf2excel-${{ github.ref.name }}-windows.tar.gz
+          path: ./dist/
 
   build-package-macos:
     name: Build on Macos
@@ -41,12 +39,11 @@ jobs:
         run: |
           pip install -r requirements.txt
           flet pack main.py
-          tar -cvzf pdf2excel-${{ github.ref.name }}-macos.tar.gz ./dist/
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
           name: macos-app
-          path: pdf2excel-${{ github.ref.name }}-macos.tar.gz
+          path: ./dist/
 
   release:
     needs: [build-package-windows, build-package-macos]
@@ -59,11 +56,26 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: windows-app
+          path: ./artifacts/windows-app
+
+      - name: Display structure of downloaded files windows
+        run: ls -R
+        working-directory: ./artifacts/windows-app
 
       - name: Download artifacts macos-app
         uses: actions/download-artifact@v1
         with:
           name: macos-app
+          path: ./artifacts/macos-app
+
+      - name: Display structure of downloaded files macos
+        run: ls -R
+        working-directory: ./artifacts/macos-app
+
+      - name: gzip
+        run: |
+          tar -cvzf pdf2excel-${{ github.ref.name }}-windows.tar.gz ./artifacts/windows-app
+          tar -cvzf pdf2excel-${{ github.ref.name }}-macos.tar.gz ./artifacts/macos-app
 
       - name: Create Release
         id: create_release
